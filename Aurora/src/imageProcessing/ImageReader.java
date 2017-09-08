@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 /**
  * 
- * @author Bret and Jake Hackim
+ * @author Bret Reynolds and Jake Hackim
  *
  */
 public class ImageReader {
