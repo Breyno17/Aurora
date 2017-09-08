@@ -51,12 +51,10 @@ public class ImageReader {
      */
     private static String intToHex(int i){
     	String rtn = "";
-    	
-    	int next = i / 16;
-    	
-    	if(next > 0)
-    		rtn += intToHex(next);
-    	
+    	//recursive call if current value is greater than 16
+    	if(i >= 16)
+    		rtn += intToHex(i / 16);
+    	//printing remainder value to rtn string
     	i %= 16;
     	if(i < 10)
     		return rtn += i;
