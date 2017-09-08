@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 /**
  * 
- * @author Bret
+ * @author Bret and Jake 
  *
  */
 public class ImageReader {
