@@ -2,15 +2,15 @@ function [ Aurora ] = AuroraInit(nc,nfc,cd)
 % Initializes ai Aurora structure with kernel values according to a
 % specified structure.
 % INPUTS:
-%       -nc:    Row vector with same number of elements as convolutional 
+%       -nc:    Row vector with same number of elements as convolutional
 %       layers that specifies the number of convolutions per layer.
 %
 %       -nfc:   Row vector with same number of elements as fully connected
 %       layers that specifies the number of nodes in fully connected
 %       layers.
 %
-%       -cd:    Matrix that specifies the dimensions of the kernel for each 
-%       convolutional layer, assumes square matrices. Should have same 
+%       -cd:    Matrix that specifies the dimensions of the kernel for each
+%       convolutional layer, assumes square matrices. Should have same
 %       number of elements as convolutional layers.
 %
 %
@@ -26,10 +26,25 @@ Aurora.FCL = length(nfc);
 Aurora.LVec = [nc nfc];
 if sum(rem(cd,2)) == length(cd)
     Aurora.KDim = cd;
-    % Initializes convolutional layer structure using random values from 0 to 1
+    % Initializes convolutional layer structure using random values from -1 to 1
     % and assigns them to Aurora.Ln
     for l=1:Aurora.CL
-        Aurora.(sprintf('L%d',l)) = single(-1 + 2 * rand(cd(l),cd(l),nc(l)));
+        Aurora.(sprintf('L%d',l)) = -1 + 2 * rand(cd(l),cd(l),nc(l));
+    end
+    
+    % Initializes combinations of images for convolusions of different
+    % sizes
+    for n=2:Aurora.CL
+        k = 1;
+        b = nchoosek(Aurora.LVec(n - 1), k);
+        while b < Aurora.LVec(n)
+            k = k + 1;
+            b = nchoosek(Aurora.LVec(n - 1), k);
+        end
+        x = 1:Aurora.LVec(n-1);
+        c1 = nchoosek(x, k);
+        c2 = nchoosek(x, k+1);
+        Aurora.(sprintf('L%dcomb',n)) = [c1(1:b/2); c2(1:b/2)];
     end
     
     % Initializes fully-connected layer structure using random values from 0
