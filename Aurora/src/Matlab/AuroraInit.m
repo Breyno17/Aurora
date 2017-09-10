@@ -29,7 +29,7 @@ if sum(rem(cd,2)) == length(cd)
     % Initializes convolutional layer structure using random values from 0 to 1
     % and assigns them to Aurora.Ln
     for l=1:Aurora.CL
-        Aurora.(sprintf('L%d',l)) = rand(cd(l),cd(l),nc(l));
+        Aurora.(sprintf('L%d',l)) = single(rand(cd(l),cd(l),nc(l)));
     end
     
     % Initializes fully-connected layer structure using random values from 0
