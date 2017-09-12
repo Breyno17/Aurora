@@ -48,8 +48,13 @@ for i = 1: a.CL
     im = rtn;
 end
 
-for i = (i + 1):a.FCL
-    
+for i = (i + 1):a.FCL + a.CL
+    rtn = zeros(1, a.LVec(i));
+    for j = 1:a.LVec(i)
+        rtn(j) = sum(mean(mean(im)) * a.(sprintf('L%d', i))(j));
+    end
+    im = rtn;
 end
+rtn = im / 255;
 end
 
