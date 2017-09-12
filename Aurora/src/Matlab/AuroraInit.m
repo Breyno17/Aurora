@@ -35,16 +35,21 @@ if sum(rem(cd,2)) == length(cd)
     % Initializes combinations of images for convolusions of different
     % sizes
     for n=2:Aurora.CL
+        if Aurora.LVec(n- 1) < Aurora.LVec(n)
         k = 1;
         b = nchoosek(Aurora.LVec(n - 1), k);
         while b < Aurora.LVec(n)
             k = k + 1;
             b = nchoosek(Aurora.LVec(n - 1), k);
         end
-        x = 1:Aurora.LVec(n-1);
-        c1 = nchoosek(x, k);
-        c2 = nchoosek(x, k+1);
-        Aurora.(sprintf('L%dcomb',n)) = [c1(1:b/2); c2(1:b/2)];
+        x = 1:Aurora.LVec(n - 1);
+        Aurora.(sprintf('L%dcomb',n)) = ...
+            [nchoosek_rand(x, k, ceil(Aurora.LVec(n)/2)); ...
+            nchoosek_rand(x, k - 1, floor(Aurora.LVec(n)/2)), ...
+            zeros(floor(Aurora.LVec(n)/2), 1)];
+        else
+            Aurora.(sprintf('L%dcomb',n)) = 1;
+        end
     end
     
     % Initializes fully-connected layer structure using random values from 0

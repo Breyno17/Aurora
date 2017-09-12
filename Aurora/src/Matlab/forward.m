@@ -12,27 +12,34 @@ function [ rtn ] = forward( a, im )
 for i = 1: a.CL
     %radius of the filter excluding center
     rad = floor(a.KDim(i) / 2);
+    
     %initialize next layer matrix
-    rtn = single(zeros(r - 2 *rad, c - 2 *rad, a.LVec(i)));
-    %loop through filters in this layer
+    rtn = uint8(zeros(r - 2 *rad, c - 2 *rad, a.LVec(i)));
+    
+    % loop through filters in this layer
     for j = 1:a.LVec(i)
-        %loop through image decreasing hieght and width by 2*rad
-        for k = 1 + rad:r - rad
-            for l = 1 + rad:c - rad
-                %loop through filter
-                for m = 1:a.KDim(i)
-                    for n = 1:a.KDim(i)
-                        
-                        rtn(k - rad,l - rad, j) = rtn(k - rad,l - rad, j) ...
-                            + im(k - rad - 1 + m, l - rad - 1 + n) ...
-                            * a.(sprintf('L%d', i))(m, n, j);
-                    end
+        % summing combined convolusion layers
+        if i > 1
+            % if there is a difference, a combination must occor
+            if a.LVec(i) ~= a.LVec(i - 1)
+                combs = a.(sprintf('L%dcomb', i));
+                
+                % for combinations of different sizes some end in 0
+                % those must be truncated to avoid erros
+                % averaging combination images
+                if combs(j,end) == 0
+                    tmp = sum(im(:, :, combs(j,end - 1)), 3) ...
+                        / length(combs);
+                else
+                    tmp = sum(im(:, :, combs(j,:)), 3) ...
+                        / length(combs - 1);
                 end
-                %activity function
-                if rtn(k - rad, l - rad, j) < 0
-                    rtn(k - rad, l - rad, j) = 0;
-                end
+            else
+                tmp = double(im);
             end
+            rtn(:, :, j) = convolve(tmp, a.(sprintf('L%d',i))(:, :, j));
+        else
+            rtn(:, :, j) = convolve(double(im), a.(sprintf('L%d',i))(:, :, j));
         end
         
     end
